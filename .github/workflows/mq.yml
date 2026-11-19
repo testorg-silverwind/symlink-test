@@ -12,4 +12,5 @@ jobs:
       - run: env | grep -E '^GITHUB_(REF|SHA|EVENT_NAME|BASE_REF|HEAD_REF|REF_NAME|REF_TYPE)=' | sort
       - uses: actions/checkout@v4
       - run: test ! -e FAIL
+      - run: if [ "$GITHUB_EVENT_NAME" = merge_group ] && [ -e MQFAIL ]; then exit 1; fi
       - run: if [ -e SLEEP ]; then sleep "$(cat SLEEP)"; fi

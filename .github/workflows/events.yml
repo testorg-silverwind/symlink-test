@@ -1,0 +1,17 @@
+name: events
+on:
+  pull_request:
+    types: [enqueued, dequeued]
+  push:
+    branches: ['gh-readonly-queue/**']
+  create:
+  merge_group:
+    types: [checks_requested, destroyed]
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "$GH_EVENT"
+        env:
+          GH_EVENT: ${{ toJSON(github.event) }}
+      - run: env | grep -E '^GITHUB_(REF|SHA|EVENT_NAME|BASE_REF|HEAD_REF|REF_NAME|REF_TYPE)=' | sort
