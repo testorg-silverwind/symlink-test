@@ -1,0 +1,15 @@
+name: CI
+on:
+  pull_request:
+  merge_group:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "$GH_EVENT"
+        env:
+          GH_EVENT: ${{ toJSON(github.event) }}
+      - run: env | grep -E '^GITHUB_(REF|SHA|EVENT_NAME|BASE_REF|HEAD_REF|REF_NAME|REF_TYPE)=' | sort
+      - uses: actions/checkout@v4
+      - run: test ! -e FAIL
+      - run: if [ -e SLEEP ]; then sleep "$(cat SLEEP)"; fi
