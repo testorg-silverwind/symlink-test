@@ -1,0 +1,15 @@
+name: mq-live evidence
+run-name: mq-live ${{ github.event_name }} ${{ github.event.action }} ${{ github.event.reason || 'none' }} ${{ github.event.number || 'group' }} ${{ github.event.merge_group.head_ref || github.event.pull_request.head.ref }} ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
+on:
+  merge_group:
+    types: [checks_requested, destroyed]
+    branches: [mq-live]
+  pull_request:
+    types: [enqueued, dequeued]
+    branches: [mq-live]
+permissions: {}
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - run: jq -c '{action,reason,number,sender:.sender.login,merge_group:(.merge_group|{head_ref,head_sha,base_ref,base_sha}),pull_request:(.pull_request|{number,head:.head.ref,base:.base.ref})}' "$GITHUB_EVENT_PATH"
